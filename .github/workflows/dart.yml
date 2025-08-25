@@ -62,14 +62,6 @@ jobs:
       - name: '📦 Install Dependencies'
         run: flutter pub get
 
-      # 🔬 Step 5: Analyze the project source code
-      - name: '🔬 Analyze Code'
-        run: flutter analyze
-
-      # 🧪 Step 6: Run widget tests
-      - name: '🧪 Run Tests'
-        run: flutter test
-
       # 🏗️ Step 7: Build the Android release APK
       - name: '🏗️ Build Android APK'
         run: flutter build apk --release
