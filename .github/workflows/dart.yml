@@ -1,35 +1,86 @@
-name: Build Android APK
+# ----------------------------------------------------------------------------- #
+#          Modern Downloader Manager - Android CI Build Workflow 🚀            #
+# ----------------------------------------------------------------------------- #
+#
+# This workflow is triggered on pushes or pull requests to the 'main' branch,
+# or can be run manually from the GitHub Actions tab.
+#
+# It performs the following steps:
+# 1. 🛒 Checks out the source code.
+# 2. ☕ Sets up the Java Development Kit (JDK).
+# 3. 🐦 Sets up the Flutter SDK.
+# 4. 📦 Installs project dependencies.
+# 5. 🔬 Analyzes the code for errors and warnings.
+# 6. 🧪 Runs widget tests.
+# 7. 🏗️ Builds the Android release APK.
+# 8. 📤 Uploads the generated APK as a build artifact.
+#
+name: 'Android CI Build 📱'
 
+# --- Triggers for the workflow ---
 on:
+  # Triggers the workflow on push events for the main branch
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  # Triggers the workflow on pull request events for the main branch
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:   # Manual trigger
+    branches: [ "main" ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# --- Workflow Jobs ---
 jobs:
-  build:
+  # The main job to build the Android application
+  build-android:
+    name: 'Build Android App 🚀'
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # --- Steps to be executed ---
     steps:
-      - name: Checkout repository
+      # 🛒 Step 1: Check out the repository code
+      - name: '🛒 Checkout Repository'
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      # ☕ Step 2: Set up Java Development Kit (JDK)
+      - name: '☕ Set up JDK 17'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # 🐦 Step 3: Set up Flutter SDK
+      - name: '🐦 Set up Flutter'
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: 'stable' # Or specify a version e.g., '3.19.0'
+          cache: true
 
-      - name: Install dependencies
+      # 📦 Step 4: Get Flutter dependencies
+      - name: '📦 Install Dependencies'
         run: flutter pub get
 
-      - name: Build APK
+      # 🔬 Step 5: Analyze the project source code
+      - name: '🔬 Analyze Code'
+        run: flutter analyze
+
+      # 🧪 Step 6: Run widget tests
+      - name: '🧪 Run Tests'
+        run: flutter test
+
+      # 🏗️ Step 7: Build the Android release APK
+      - name: '🏗️ Build Android APK'
         run: flutter build apk --release
 
-      - name: Upload APK artifact
+      # 📤 Step 8: Upload the build artifact
+      - name: '📤 Upload APK Artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
+          # Name of the artifact to be uploaded
+          name: cnex-downloader-apk
+          # Path to the file(s) to be uploaded
           path: build/app/outputs/flutter-apk/app-release.apk
+          # How long to retain the artifact (in days)
+          retention-days: 7
